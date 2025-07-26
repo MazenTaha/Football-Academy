@@ -1,0 +1,15 @@
+{
+  "name": "strive-football-academy",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "ejs": "^3.1.8",
+    "express": "^4.18.2",
+    "nodemailer": "^6.9.1",
+    "pg": "^8.11.1"
+  }
+}

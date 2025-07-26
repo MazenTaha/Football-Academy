@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Player Registration</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1>Strive Academy Registration</h1>
+    <form action="/register" method="POST">
+      <h2>Player Information</h2>
+      <input type="text" name="playerName" placeholder="Full Name" required>
+      <input type="date" name="dob" required>
+      <input type="number" name="age" min="6" max="23" required>
+      <select name="gender">
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+      <input type="text" name="nationality" placeholder="Nationality" required>
+      <input type="text" name="school" placeholder="School Name" required>
+      <input type="text" name="grade" placeholder="Current Grade/Year" required>
+
+      <h2>Parent/Guardian</h2>
+      <input type="text" name="parentName" placeholder="Full Name" required>
+      <input type="text" name="relationship" placeholder="Relationship" required>
+      <input type="text" name="mobile" placeholder="Mobile" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="text" name="emergency" placeholder="Emergency Contact" required>
+
+      <h2>Medical</h2>
+      <input type="text" name="allergies" placeholder="Allergies">
+      <input type="text" name="medication" placeholder="Medication">
+      <input type="text" name="doctorContact" placeholder="Doctor Contact">
+
+      <h2>Program</h2>
+      <select name="days">
+        <option value="Weekdays">Weekdays</option>
+        <option value="Weekends">Weekends</option>
+        <option value="Both">Both</option>
+      </select>
+      <select name="type">
+        <option value="Group Training">Group Training</option>
+        <option value="1-on-1 Personal Training">1-on-1</option>
+      </select>
+      <select name="position">
+        <option value="Goalkeeper">Goalkeeper</option>
+        <option value="Defender">Defender</option>
+        <option value="Midfielder">Midfielder</option>
+        <option value="Forward">Forward</option>
+      </select>
+
+      <h2>Subscription</h2>
+      <select name="subscription">
+        <option value="3 months">3 months - 15000 EGP</option>
+        <option value="6 months">6 months - 24000 EGP</option>
+        <option value="12 months">12 months - 36000 EGP</option>
+      </select>
+
+      <h2>Consent & Declaration</h2>
+      <p>
+        I, the undersigned parent/guardian, certify that the information provided is true and complete. I give
+        permission for my child to participate in Strive Sports Academy programs, and I acknowledge the risks involved
+        in physical sports training. I agree to follow all academy policies and procedures.
+      </p>
+      <label for="signature">Signature:</label>
+      <input type="text" id="signature" name="signature" placeholder="Type your full name as signature" required>
+
+      <button type="submit">Submit</button>
+    </form>
+  </div>
+</body>
+
+</html>

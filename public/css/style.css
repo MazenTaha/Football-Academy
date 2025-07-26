@@ -1,0 +1,100 @@
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+  min-height: 100vh;
+}
+
+.container {
+  width: 90%;
+  max-width: 600px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 32px 28px;
+  border-radius: 32px;
+  /* More rounded corners */
+  box-shadow: 0 8px 32px rgba(44, 62, 80, 0.15);
+}
+
+h1,
+h2 {
+  text-align: center;
+  color: #2d6a4f;
+  margin-bottom: 18px;
+  font-weight: 700;
+}
+
+form input,
+form select {
+  width: calc(100% - 16px);
+  /* Decrease length by 16px from the right */
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  border: 1px solid #b7e4c7;
+  border-radius: 8px;
+  background: #f8f9fa;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  position: static;
+  /* Remove relative positioning */
+  left: 0;
+  /* Ensure no horizontal shift */
+}
+
+form input:focus,
+form select:focus {
+  border-color: #40916c;
+  outline: none;
+}
+
+form label {
+  font-weight: 500;
+  color: #40916c;
+  margin-bottom: 6px;
+  display: block;
+}
+
+form p {
+  background: #e9f5db;
+  color: #1b4332;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 0.98rem;
+  box-shadow: 0 2px 8px rgba(64, 145, 108, 0.07);
+}
+
+form button {
+  padding: 12px 0;
+  background: linear-gradient(90deg, #40916c 0%, #2d6a4f 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.12);
+  transition: background 0.2s, transform 0.2s;
+}
+
+form button:hover {
+  background: linear-gradient(90deg, #2d6a4f 0%, #40916c 100%);
+  transform: translateY(-2px) scale(1.03);
+}
+
+@media (max-width: 700px) {
+  .container {
+    padding: 16px 6px;
+    width: 98%;
+  }
+
+  h1,
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  form input,
+  form select {
+    font-size: 0.95rem;
+    padding: 8px 10px;
+  }
+}
