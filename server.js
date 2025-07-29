@@ -7,6 +7,7 @@ const app = express();
 const port = 3000;
 
 app.use(cors());
+app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -17,7 +18,6 @@ const pool = new Pool({
         rejectUnauthorized: false,
     }
 });
-
 
 
 app.post('/register', async (req, res) => {
