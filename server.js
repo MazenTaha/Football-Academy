@@ -19,6 +19,7 @@ const pool = new Pool({
 });
 
 
+
 app.post('/register', async (req, res) => {
     try {
         const data = req.body;
