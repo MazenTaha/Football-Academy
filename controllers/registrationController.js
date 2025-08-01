@@ -7,7 +7,7 @@ exports.getForm = (req, res) => {
 
 exports.submitForm = async (req, res) => {
   const {
-    playerName, dob, age, gender, nationality, school, grade,
+    player_full_name, dob, age, gender, nationality, school, grade,
     parentName, relationship, mobile, email, emergency,
     allergies, medication, doctorContact,
     days, type, position,
@@ -17,13 +17,13 @@ exports.submitForm = async (req, res) => {
   try {
     await db.query(
       `INSERT INTO registrations 
-        (player_name, dob, age, gender, nationality, school, grade,
+        (player_full_name, dob, age, gender, nationality, school, grade,
          parent_name, relationship, mobile, email, emergency,
          allergies, medication, doctor_contact,
          days, program_type, position, consent, subscription)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,
                $13,$14,$15,$16,$17,$18,$19,$20)`,
-      [playerName, dob, age, gender, nationality, school, grade,
+      [player_full_name, dob, age, gender, nationality, school, grade,
         parentName, relationship, mobile, email, emergency,
         allergies, medication, doctorContact,
         days, type, position, consent, subscription]
@@ -45,7 +45,7 @@ exports.submitForm = async (req, res) => {
              <p>Your child <b>${playerName}</b> is scheduled for a free evaluation session at <b>German University in Cairo, New Cairo</b>. We will contact you shortly with a specific date.</p>`
     });
 
-    res.render('success', { name: playerName });
+    res.render('success', { name: player_full_name });
 
   } catch (err) {
     console.error(err);
