@@ -74,7 +74,7 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const response = await fetch('http://localhost:3000/register', {
+      const response = await fetch('/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -82,15 +82,46 @@ export default function RegisterPage() {
         body: JSON.stringify(formData),
       })
       
-      if (response.ok) {
+      const result = await response.json()
+      
+      if (response.ok && result.success) {
         // Handle success
-        console.log('Registration successful')
+        console.log('Registration successful:', result.player)
+        alert('Registration successful! Welcome to Strive Academy!')
+        // You can redirect to a success page or reset the form
+        setFormData({
+          player_full_name: '',
+          dob: '',
+          age: '',
+          gender: '',
+          nationality: '',
+          school_name: '',
+          grade: '',
+          parent_name: '',
+          relation: '',
+          parent_phone: '',
+          parent_email: '',
+          emergency_phone: '',
+          has_allergies: '',
+          allergy_details: '',
+          taking_meds: '',
+          med_details: '',
+          doctor_info: '',
+          training_days: '',
+          program_type: '',
+          position: '',
+          subscription_plan: '',
+          signature: ''
+        })
+        setCurrentStep(1)
       } else {
         // Handle error
-        console.error('Registration failed')
+        console.error('Registration failed:', result.message)
+        alert(`Registration failed: ${result.message}`)
       }
     } catch (error) {
       console.error('Error:', error)
+      alert('An error occurred during registration. Please try again.')
     }
   }
 
