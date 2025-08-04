@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  User, 
-  Phone, 
-  Mail, 
-  Shield, 
+import {
+  User,
+  Phone,
+  Mail,
+  Shield,
   Calendar,
   GraduationCap,
   Heart,
@@ -18,6 +18,8 @@ import {
 
 export default function RegisterPage() {
   const [currentStep, setCurrentStep] = useState(1)
+  const [validationErrors, setValidationErrors] = useState<string[]>([])
+  const [isStepValid, setIsStepValid] = useState(false)
   const [formData, setFormData] = useState({
     player_full_name: '',
     dob: '',
@@ -51,17 +53,73 @@ export default function RegisterPage() {
     { number: 5, title: 'Consent & Payment', icon: CheckCircle }
   ]
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
       [name]: value
     }))
+    
+    // Don't clear validation errors immediately to prevent flickering
+    // They will be cleared when user clicks Next or when validation passes
+  }
+
+  // Remove automatic validation to prevent flickering
+  // Validation will only happen when user clicks Next or Submit
+
+  const validateCurrentStep = () => {
+    const errors: string[] = []
+
+    switch (currentStep) {
+      case 1:
+        if (!formData.player_full_name.trim()) errors.push('Player full name is required')
+        if (!formData.dob) errors.push('Date of birth is required')
+        if (!formData.age) errors.push('Age is required')
+        if (!formData.gender) errors.push('Gender is required')
+        if (!formData.nationality.trim()) errors.push('Nationality is required')
+        if (!formData.school_name.trim()) errors.push('School name is required')
+        if (!formData.grade.trim()) errors.push('Grade is required')
+        break
+      case 2:
+        if (!formData.parent_name.trim()) errors.push('Parent name is required')
+        if (!formData.relation.trim()) errors.push('Relationship is required')
+        if (!formData.parent_phone.trim()) errors.push('Parent phone is required')
+        if (!formData.parent_email.trim()) errors.push('Parent email is required')
+        if (!formData.emergency_phone.trim()) errors.push('Emergency phone is required')
+        break
+      case 3:
+        if (formData.has_allergies === 'Yes' && !formData.allergy_details.trim()) {
+          errors.push('Please provide allergy details')
+        }
+        if (formData.taking_meds === 'Yes' && !formData.med_details.trim()) {
+          errors.push('Please provide medication details')
+        }
+        break
+      case 4:
+        if (!formData.training_days) errors.push('Training days is required')
+        if (!formData.program_type) errors.push('Program type is required')
+        if (!formData.position) errors.push('Position is required')
+        if (!formData.subscription_plan) errors.push('Subscription plan is required')
+        break
+      case 5:
+        if (!formData.signature.trim()) errors.push('Digital signature is required')
+        break
+    }
+
+    setValidationErrors(errors)
+    const isValid = errors.length === 0
+    setIsStepValid(isValid)
+    return isValid
   }
 
   const nextStep = () => {
     if (currentStep < 5) {
-      setCurrentStep(currentStep + 1)
+      const isValid = validateCurrentStep()
+      if (isValid) {
+        setCurrentStep(currentStep + 1)
+        setIsStepValid(false) // Reset validation for next step
+        setValidationErrors([]) // Clear errors
+      }
     }
   }
 
@@ -81,9 +139,9 @@ export default function RegisterPage() {
         },
         body: JSON.stringify(formData),
       })
-      
+
       const result = await response.json()
-      
+
       if (response.ok && result.success) {
         // Handle success
         console.log('Registration successful:', result.player)
@@ -136,21 +194,26 @@ export default function RegisterPage() {
             className="space-y-6"
           >
             <h3 className="text-2xl font-semibold text-gray-900 mb-6">Player Information</h3>
-            
+
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Full Name <span className="text-red-500">*</span>
+                </label>
                 <input
                   type="text"
                   name="player_full_name"
                   value={formData.player_full_name}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${!formData.player_full_name.trim() && validationErrors.length > 0
+                      ? 'border-red-300 focus:ring-red-500'
+                      : 'border-gray-300'
+                    }`}
                   placeholder="Enter player's full name"
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
                 <input
@@ -162,7 +225,7 @@ export default function RegisterPage() {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Age</label>
                 <input
@@ -177,7 +240,7 @@ export default function RegisterPage() {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
                 <select
@@ -192,7 +255,7 @@ export default function RegisterPage() {
                   <option value="Female">Female</option>
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Nationality</label>
                 <input
@@ -205,7 +268,7 @@ export default function RegisterPage() {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">School Name</label>
                 <input
@@ -218,7 +281,7 @@ export default function RegisterPage() {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Grade/Year</label>
                 <input
@@ -234,7 +297,7 @@ export default function RegisterPage() {
             </div>
           </motion.div>
         )
-        
+
       case 2:
         return (
           <motion.div
@@ -244,7 +307,7 @@ export default function RegisterPage() {
             className="space-y-6"
           >
             <h3 className="text-2xl font-semibold text-gray-900 mb-6">Parent/Guardian Information</h3>
-            
+
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
@@ -258,7 +321,7 @@ export default function RegisterPage() {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Relationship</label>
                 <input
@@ -271,7 +334,7 @@ export default function RegisterPage() {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                 <input
@@ -284,7 +347,7 @@ export default function RegisterPage() {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
                 <input
@@ -297,7 +360,7 @@ export default function RegisterPage() {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Emergency Contact</label>
                 <input
@@ -313,7 +376,7 @@ export default function RegisterPage() {
             </div>
           </motion.div>
         )
-        
+
       case 3:
         return (
           <motion.div
@@ -323,7 +386,7 @@ export default function RegisterPage() {
             className="space-y-6"
           >
             <h3 className="text-2xl font-semibold text-gray-900 mb-6">Medical Information</h3>
-            
+
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Allergies</label>
@@ -338,7 +401,7 @@ export default function RegisterPage() {
                   <option value="No">No</option>
                 </select>
               </div>
-              
+
               {formData.has_allergies === 'Yes' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Allergy Details</label>
@@ -352,7 +415,7 @@ export default function RegisterPage() {
                   />
                 </div>
               )}
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Taking Medication</label>
                 <select
@@ -366,7 +429,7 @@ export default function RegisterPage() {
                   <option value="No">No</option>
                 </select>
               </div>
-              
+
               {formData.taking_meds === 'Yes' && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Medication Details</label>
@@ -380,7 +443,7 @@ export default function RegisterPage() {
                   />
                 </div>
               )}
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Doctor Information</label>
                 <input
@@ -395,7 +458,7 @@ export default function RegisterPage() {
             </div>
           </motion.div>
         )
-        
+
       case 4:
         return (
           <motion.div
@@ -405,7 +468,7 @@ export default function RegisterPage() {
             className="space-y-6"
           >
             <h3 className="text-2xl font-semibold text-gray-900 mb-6">Program Details</h3>
-            
+
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Training Days</label>
@@ -422,7 +485,7 @@ export default function RegisterPage() {
                   <option value="Both">Both</option>
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Program Type</label>
                 <select
@@ -437,7 +500,7 @@ export default function RegisterPage() {
                   <option value="1-on-1 Personal Training">1-on-1 Personal Training</option>
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Position</label>
                 <select
@@ -454,7 +517,7 @@ export default function RegisterPage() {
                   <option value="Forward">Forward</option>
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Subscription Plan</label>
                 <select
@@ -473,7 +536,7 @@ export default function RegisterPage() {
             </div>
           </motion.div>
         )
-        
+
       case 5:
         return (
           <motion.div
@@ -483,14 +546,14 @@ export default function RegisterPage() {
             className="space-y-6"
           >
             <h3 className="text-2xl font-semibold text-gray-900 mb-6">Consent & Declaration</h3>
-            
+
             <div className="bg-gray-50 p-6 rounded-lg">
               <p className="text-gray-700 leading-relaxed mb-6">
-                I, the undersigned parent/guardian, certify that the information provided is true and complete. 
-                I give permission for my child to participate in Strive Sports Academy programs, and I acknowledge 
+                I, the undersigned parent/guardian, certify that the information provided is true and complete.
+                I give permission for my child to participate in Strive Sports Academy programs, and I acknowledge
                 the risks involved in physical sports training. I agree to follow all academy policies and procedures.
               </p>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Digital Signature</label>
                 <input
@@ -506,7 +569,7 @@ export default function RegisterPage() {
             </div>
           </motion.div>
         )
-        
+
       default:
         return null
     }
@@ -524,38 +587,64 @@ export default function RegisterPage() {
         {/* Progress Steps */}
         <div className="mb-8">
           <div className="flex justify-between items-center">
-            {steps.map((step, index) => (
-              <div key={step.number} className="flex items-center">
-                <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
-                  currentStep >= step.number 
-                    ? 'bg-blue-600 border-blue-600 text-white' 
-                    : 'border-gray-300 text-gray-500'
-                }`}>
-                  {currentStep > step.number ? (
-                    <CheckCircle className="w-6 h-6" />
-                  ) : (
-                    <step.icon className="w-5 h-5" />
+            {steps.map((step, index) => {
+              const isCompleted = currentStep > step.number
+              const isCurrent = currentStep === step.number
+              const isAccessible = currentStep >= step.number
+
+              return (
+                <div key={step.number} className="flex items-center">
+                  <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-300 ${isCompleted
+                      ? 'bg-green-600 border-green-600 text-white'
+                      : isCurrent
+                        ? 'bg-blue-600 border-blue-600 text-white'
+                        : 'border-gray-300 text-gray-500'
+                    }`}>
+                    {isCompleted ? (
+                      <CheckCircle className="w-6 h-6" />
+                    ) : (
+                      <step.icon className="w-5 h-5" />
+                    )}
+                  </div>
+                  {index < steps.length - 1 && (
+                    <div className={`flex-1 h-1 mx-4 transition-all duration-300 ${isCompleted ? 'bg-green-600' : isAccessible ? 'bg-blue-600' : 'bg-gray-300'
+                      }`} />
                   )}
                 </div>
-                {index < steps.length - 1 && (
-                  <div className={`flex-1 h-1 mx-4 ${
-                    currentStep > step.number ? 'bg-blue-600' : 'bg-gray-300'
-                  }`} />
-                )}
-              </div>
-            ))}
+              )
+            })}
           </div>
           <div className="flex justify-between mt-4">
-            {steps.map((step) => (
-              <span
-                key={step.number}
-                className={`text-sm font-medium ${
-                  currentStep >= step.number ? 'text-blue-600' : 'text-gray-500'
-                }`}
-              >
-                {step.title}
-              </span>
-            ))}
+            {steps.map((step) => {
+              const isCompleted = currentStep > step.number
+              const isCurrent = currentStep === step.number
+
+              return (
+                <span
+                  key={step.number}
+                  className={`text-sm font-medium transition-colors duration-300 ${isCompleted
+                      ? 'text-green-600'
+                      : isCurrent
+                        ? 'text-blue-600'
+                        : 'text-gray-500'
+                    }`}
+                >
+                  {step.title}
+                </span>
+              )
+            })}
+          </div>
+
+                    {/* Step Completion Status */}
+          <div className="mt-4 text-center">
+            <span className="text-sm text-gray-600">
+              Step {currentStep} of {steps.length} • 
+              {validationErrors.length === 0 ? (
+                <span className="text-green-600 ml-1">✓ Ready to proceed</span>
+              ) : (
+                <span className="text-red-600 ml-1">⚠ Complete all fields</span>
+              )}
+            </span>
           </div>
         </div>
 
@@ -566,17 +655,32 @@ export default function RegisterPage() {
               {renderStepContent()}
             </AnimatePresence>
 
+            {/* Validation Errors */}
+            {validationErrors.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg"
+              >
+                <h4 className="text-red-800 font-semibold mb-2">Please complete the following:</h4>
+                <ul className="list-disc list-inside space-y-1">
+                  {validationErrors.map((error, index) => (
+                    <li key={index} className="text-red-700 text-sm">{error}</li>
+                  ))}
+                </ul>
+              </motion.div>
+            )}
+
             {/* Navigation Buttons */}
             <div className="flex justify-between mt-8">
               <button
                 type="button"
                 onClick={prevStep}
                 disabled={currentStep === 1}
-                className={`flex items-center space-x-2 px-6 py-3 rounded-lg border-2 transition-all duration-300 ${
-                  currentStep === 1
+                className={`flex items-center space-x-2 px-6 py-3 rounded-lg border-2 transition-all duration-300 ${currentStep === 1
                     ? 'border-gray-300 text-gray-400 cursor-not-allowed'
                     : 'border-gray-300 text-gray-700 hover:border-blue-600 hover:text-blue-600'
-                }`}
+                  }`}
               >
                 <ArrowLeft className="w-5 h-5" />
                 <span>Previous</span>
